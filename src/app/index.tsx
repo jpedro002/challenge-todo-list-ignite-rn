@@ -1,10 +1,12 @@
 import constants from 'expo-constants'
-import { Camera, Trash2 } from 'lucide-react-native'
-import { useState } from 'react'
-import { Image, SafeAreaView, ScrollView, Text, View } from 'react-native'
+import { ClipboardList } from 'lucide-react-native'
+import { useMemo, useState } from 'react'
+import { Image, ScrollView, Text, View } from 'react-native'
 import LogoRocket from '../assets/images/LogoRocket.png'
+import { EmptyTasksView } from '../components/EmptyTasksView'
 import { FormAddTodo } from '../components/FormAddTodo'
 import { LineTodo } from '../components/LineTodo'
+import { TodoStats } from '../components/TodoStats'
 
 const { statusBarHeight } = constants
 
@@ -34,8 +36,15 @@ export default function HomeScreen() {
 		setTodos(newTodos)
 	}
 
+	const hasTodos = todos.length !== 0
+
+	const todosChecked = useMemo(
+		() => todos.filter((todo) => todo.isChecked),
+		[todos],
+	)
+
 	return (
-		<SafeAreaView className="flex-1">
+		<ScrollView className="flex-1" scrollEnabled={hasTodos}>
 			<View
 				className=" px-6 bg-custom-gray-700 h-[170] items-center justify-center"
 				style={{
@@ -44,10 +53,15 @@ export default function HomeScreen() {
 			>
 				<Image source={LogoRocket} />
 			</View>
-			<View className="flex-1  bg-custom-gray-600 p-6 pt-0 ">
+			<View className="flex-1  bg-custom-gray-600 p-6 pt-0 h-full min-h-screen ">
 				<FormAddTodo onSubmit={handleAddTodo} />
 
-				<ScrollView className=" flex-1 mt-6">
+				<TodoStats
+					TodosCheckedCount={todosChecked.length}
+					TodosCreatedCount={todos.length}
+				/>
+
+				<View className=" flex-1 mt-6 ">
 					{todos.map(({ id, isChecked, todo }) => (
 						<LineTodo
 							key={id}
@@ -57,8 +71,10 @@ export default function HomeScreen() {
 							onRemove={() => handleRemove(id)}
 						/>
 					))}
-				</ScrollView>
+
+					{todos.length === 0 && <EmptyTasksView />}
+				</View>
 			</View>
-		</SafeAreaView>
+		</ScrollView>
 	)
 }
