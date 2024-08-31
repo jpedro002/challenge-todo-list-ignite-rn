@@ -28,8 +28,8 @@ export const LineTodo = ({
 				}`}
 			/>
 			<Text
-				className={`text-white flex-1 ml-2 ${
-					isChecked ? 'line-through text-custom-gray-300' : ''
+				className={`flex-1 ml-2 ${
+					isChecked ? 'line-through text-custom-gray-300' : 'text-white '
 				}`}
 			>
 				{todo}
